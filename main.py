@@ -5,6 +5,8 @@ from threading import Thread
 from functools import wraps
 from saveNload import save_user_data, load_user_data
 
+import os
+
 web_app = Flask('')
 
 
@@ -21,7 +23,7 @@ def keep_alive():
     Thread(target=run).start()
 
 
-BOT_TOKEN = '7417926128:AAELDb8O_3mV2sHqvnlGOJuD_rnG9HiKVIo'
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 waiting_users = []
 active_pairs = {}
