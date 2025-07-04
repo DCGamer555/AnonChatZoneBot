@@ -23,7 +23,7 @@ def keep_alive():
     Thread(target=run).start()
 
 
-BOT_TOKEN = '7417926128:AAELDb8O_3mV2sHqvnlGOJuD_rnG9HiKVIo'
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 waiting_users = []
 active_pairs = {}
