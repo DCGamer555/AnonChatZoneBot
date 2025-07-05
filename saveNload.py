@@ -65,7 +65,7 @@ def load_user_data():
     ensure_table_exists(conn)
     cur = conn.cursor()
 
-    cur.execute("SELECT user_id, data FROM users;")
+    cur.execute("SELECT user_id, data FROM 'users';")
     rows = cur.fetchall()
 
     data = {int(user_id): user_data for user_id, user_data in rows}
