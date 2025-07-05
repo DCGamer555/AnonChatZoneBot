@@ -1,19 +1,33 @@
 import os
+import psycopg2
 import json
 
-FILE_PATH = "user_data.json"
+DATABASE_URL = os.getenv("postgresql://postgres:jnXzfZuGEmQlDqtNLzOxchHaCBbIBblJ@postgres.railway.internal:5432/railway")
 
-def save_user_data(user_data: dict):
-    with open(FILE_PATH, "w") as f:
-        json.dump(user_data, f)
-    print("✅ Data saved to disk.")
+def get_connection():
+    return psycopg2.connect(DATABASE_URL, sslmode='require')
 
-def load_user_data() -> dict:
-    if not os.path.exists(FILE_PATH) or os.stat(FILE_PATH).st_size == 0:
-        return {}
-    try:
-        with open(FILE_PATH, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        print("⚠️ Warning: userdata.json is corrupted or empty. Starting with a fresh dictionary.")
-        return {}
+def save_user_data(data):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    user_id BIGINT PRIMARY KEY,
+                    data JSONB
+                )
+            """)
+            for user_id, user_data in data.items():
+                cur.execute("""
+                    INSERT INTO users (user_id, data)
+                    VALUES (%s, %s)
+                    ON CONFLICT (user_id)
+                    DO UPDATE SET data = EXCLUDED.data
+                """, (user_id, json.dumps(user_data)))
+        conn.commit()
+
+def load_user_data():
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT user_id, data FROM users")
+            rows = cur.fetchall()
+            return {str(row[0]): row[1] for row in rows}
