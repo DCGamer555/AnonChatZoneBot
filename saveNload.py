@@ -2,10 +2,14 @@ import os
 import psycopg2
 import json
 
-DATABASE_URL = os.getenv("postgresql://postgres:jnXzfZuGEmQlDqtNLzOxchHaCBbIBblJ@postgres.railway.internal:5432/railway")
-
 def get_connection():
-    return psycopg2.connect(DATABASE_URL, sslmode='require')
+    return psycopg2.connect(
+        host=os.getenv("PGHOST"),
+        database=os.getenv("PGDATABASE"),
+        user=os.getenv("PGUSER"),
+        password=os.getenv("PGPASSWORD"),
+        port=os.getenv("PGPORT")
+    )
 
 def save_user_data(data):
     with get_connection() as conn:
