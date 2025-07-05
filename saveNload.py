@@ -5,7 +5,7 @@ import json
 def ensure_table_exists(conn):
     with conn.cursor() as cursor:
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS user (
+        CREATE TABLE IF NOT EXISTS "user" (
             id BIGINT PRIMARY KEY,
             gender VARCHAR(10),
             age INTEGER,
@@ -33,11 +33,19 @@ def save_user_data(data):
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            user_id BIGINT PRIMARY KEY,
-            data JSONB
-        );
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS "user" (
+        id BIGINT PRIMARY KEY,
+        gender VARCHAR(10),
+        age INTEGER,
+        country VARCHAR(50),
+        reports INTEGER,
+        reporters TEXT[],
+        votes_up INTEGER,
+        votes_down INTEGER,
+        voters TEXT[],
+        feedback_track JSONB
+    )
     """)
 
     for user_id, user_data in data.items():
