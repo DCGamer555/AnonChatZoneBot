@@ -28,7 +28,7 @@ def save_user_data(data: dict):
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        ensure_db(cursor)
+        ensure_db()
 
         for user_id, details in data.items():
             cursor.execute("""
