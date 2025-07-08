@@ -386,7 +386,6 @@ async def periodic_save():
     global user_details
     while True:
         save_user_data(user_details)
-        print("✅ User Data saved to drive successfully.")
         user_details = {int(k): v for k, v in load_user_data().items()}
         await asyncio.sleep(60)
 
