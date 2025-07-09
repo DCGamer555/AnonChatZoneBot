@@ -23,7 +23,7 @@ def keep_alive():
     Thread(target=run).start()
 
 
-BOT_TOKEN = os.getenv("DATABASE_URL")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 waiting_users = []
 active_pairs = {}
