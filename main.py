@@ -23,7 +23,7 @@ def keep_alive():
     Thread(target=run).start()
 
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
+BOT_TOKEN = os.getenv("DATABASE_URL")
 
 waiting_users = []
 active_pairs = {}
@@ -54,7 +54,9 @@ def check_user_profile(handler_func):
                 "age": None,
                 "country": None,
                 "reports": 0,
+                "reporters": [],
                 "votes": {"up": 0, "down": 0},
+                "voters": [],
                 "feedback_track": {}
             }
             user_input_stage[user_id] = "gender"
@@ -178,7 +180,9 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "age": None,
             "country": None,
             "reports": 0,
+            "reporters": [],
             "votes": {"up": 0, "down": 0},
+            "voters": [],
             "feedback_track": {}
         }
 
@@ -188,12 +192,16 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if action == "rate":
         vote_type = data[2]
         if not track[user_id]["voted"]:
-            user_details[target_id]["votes"][vote_type] += 1
+            if user_id not in user_details[target_id]["voters"]:
+                user_details[target_id]["votes"][vote_type] += 1
+                user_details[target_id]["voters"].append(user_id)
             track[user_id]["voted"] = True
 
     elif action == "report":
         if not track[user_id]["reported"]:
-            user_details[target_id]["reports"] += 1
+            if user_id not in user_details[target_id]["reporters"]:
+                user_details[target_id]["reports"] += 1
+                user_details[target_id]["reporters"].append(user_id)
             track[user_id]["reported"] = True
 
     voted = track[user_id]["voted"]
@@ -201,23 +209,31 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if voted and reported:
         await query.edit_message_text("""
-*Thank You for your feedback.
+    *Thank You for your feedback.
 
-Your feedback helps other users to be safe and secure.*
-""", parse_mode="Markdown")
+    Your feedback helps other users to be safe and secure.*
+    """, parse_mode="Markdown")
     else:
+        rateStartText = "💡 If the interlocutor misbehaved or violated the rules, send a complaint against them."
+        rateEndText = ""
         buttons = []
         if not voted:
+            rateEndText = "Give a rating to your Interlocutor to help ensure others' safety."
             buttons.append([
                 InlineKeyboardButton("👍", callback_data=f"rate|{target_id}|up"),
                 InlineKeyboardButton("👎", callback_data=f"rate|{target_id}|down")
             ])
 
         if not reported:
+            rateEndText = "Report the Interlocutor, if they violated any rules, which may eventually lead to their banned if noticed."
             buttons.append([
                 InlineKeyboardButton("🚩 Report", callback_data=f"report|{target_id}")
             ])
-        await query.edit_message_reply_markup(InlineKeyboardMarkup(buttons))
+        await query.edit_message_text(text=f"""
+*{rateStartText}
+
+{rateEndText}*
+""", reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
 
 
 @check_user_profile
