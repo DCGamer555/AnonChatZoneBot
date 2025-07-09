@@ -16,10 +16,10 @@ def ensure_db():
                     age INTEGER,
                     country VARCHAR(25),
                     reports INTEGER,
-                    reporters JSON,
+                    reporters TEXT,
                     vote_up INTEGER,
                     vote_down INTEGER,
-                    voters JSON,
+                    voters TEXT,
                     feedback_track JSON
             )
         """)
