@@ -54,9 +54,7 @@ def check_user_profile(handler_func):
                 "age": None,
                 "country": None,
                 "reports": 0,
-                "reporters": [],
                 "votes": {"up": 0, "down": 0},
-                "voters": [],
                 "feedback_track": {}
             }
             user_input_stage[user_id] = "gender"
@@ -180,9 +178,7 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "age": None,
             "country": None,
             "reports": 0,
-            "reporters": [],
             "votes": {"up": 0, "down": 0},
-            "voters": [],
             "feedback_track": {}
         }
 
@@ -192,16 +188,12 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if action == "rate":
         vote_type = data[2]
         if not track[user_id]["voted"]:
-            if user_id not in user_details[target_id]["voters"]:
-                user_details[target_id]["votes"][vote_type] += 1
-                user_details[target_id]["voters"].append(user_id)
+            user_details[target_id]["votes"][vote_type] += 1
             track[user_id]["voted"] = True
 
     elif action == "report":
         if not track[user_id]["reported"]:
-            if user_id not in user_details[target_id]["reporters"]:
-                user_details[target_id]["reports"] += 1
-                user_details[target_id]["reporters"].append(user_id)
+            user_details[target_id]["reports"] += 1
             track[user_id]["reported"] = True
 
     voted = track[user_id]["voted"]
