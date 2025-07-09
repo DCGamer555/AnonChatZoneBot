@@ -31,9 +31,9 @@ def save_user_data(data: dict):
         for user_id, details in data.items():
             cursor.execute("""
                     INSERT INTO user_details (
-                        user_id, gender, age, country, reports, reporters, 
-                        vote_up, vote_down, voters, feedback_track
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        user_id, gender, age, country, reports, 
+                        vote_up, vote_down, feedback_track
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (user_id) DO UPDATE SET
                         gender = EXCLUDED.gender,
                         age = EXCLUDED.age,
