@@ -56,7 +56,7 @@ def save_user_data(data: dict):
                 details.get("votes", {}).get("up", 0),
                 details.get("votes", {}).get("down", 0),
                 json.dumps(details.get("voters", [])),
-                json.dumps(details.get("feedback_track", {}))
+                details.get("feedback_track", {})
             ))
         conn.commit()
         print("✅ User Data Saved to Drive Successfully.")
@@ -82,6 +82,6 @@ def load_user_data() -> dict:
                     "down": row[7],
                 },
                 "voters": json.loads(row[8]),
-                "feedback_track": json.loads(row[9]),
+                "feedback_track": row[9],
             }
         return data
