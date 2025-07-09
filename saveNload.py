@@ -2,7 +2,6 @@ import sqlite3, json, psycopg2, os
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
@@ -34,7 +33,7 @@ def save_user_data(data: dict):
         for user_id, details in data.items():
             cursor.execute("""
                     INSERT INTO user_details (
-                        user_id, gender, age, country, reports, reporters,
+                        user_id, gender, age, country, reports, reporters, 
                         vote_up, vote_down, voters, feedback_track
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (user_id) DO UPDATE SET
@@ -46,7 +45,7 @@ def save_user_data(data: dict):
                         vote_up = EXCLUDED.vote_up,
                         vote_down = EXCLUDED.vote_down,
                         voters = EXCLUDED.voters,
-                        feedback_track = EXCLUDED.feedback_track
+                        feedback_track = EXCLUDED.feedback_track,
             """, (
                 user_id,
                 details.get("gender"),
@@ -83,6 +82,6 @@ def load_user_data() -> dict:
                     "down": row[7],
                 },
                 "voters": json.loads(row[8]),
-                "feedback_track": row[9],
+                "feedback_track": row[9]
             }
         return data
