@@ -45,7 +45,7 @@ def save_user_data(data: dict):
                         vote_up = EXCLUDED.vote_up,
                         vote_down = EXCLUDED.vote_down,
                         voters = EXCLUDED.voters,
-                        feedback_track = EXCLUDED.feedback_track,
+                        feedback_track = EXCLUDED.feedback_track
             """, (
                 user_id,
                 details.get("gender"),
