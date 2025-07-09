@@ -192,16 +192,16 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if action == "rate":
         vote_type = data[2]
         if not track[user_id]["voted"]:
-            if user_id not in user_details[target_id]["voted"]:
+            if user_id not in user_details[target_id]["voters"]:
                 user_details[target_id]["votes"][vote_type] += 1
-                user_details[target_id]["voted"].append(user_id)
+                user_details[target_id]["voters"].append(user_id)
             track[user_id]["voted"] = True
 
     elif action == "report":
         if not track[user_id]["reported"]:
-            if user_id not in user_details[target_id]["reported"]:
+            if user_id not in user_details[target_id]["reporters"]:
                 user_details[target_id]["reports"] += 1
-                user_details[target_id]["reported"].append(user_id)
+                user_details[target_id]["reporters"].append(user_id)
             track[user_id]["reported"] = True
 
     voted = track[user_id]["voted"]
