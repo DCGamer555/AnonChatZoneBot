@@ -15,11 +15,11 @@ def ensure_db():
                     age INTEGER,
                     country VARCHAR(25),
                     reports INTEGER,
-                    reporters JSON,
+                    reporters JSON(),
                     vote_up INTEGER,
                     vote_down INTEGER,
-                    voters JSON,
-                    feedback_track JSON
+                    voters JSON(),
+                    feedback_track JSON()
             )
         """)
         conn.commit()
