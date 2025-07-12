@@ -76,12 +76,12 @@ def load_user_data() -> dict:
                 "age": row[2],
                 "country": row[3],
                 "reports": row[4],
-                "reporters": json.loads(row[5]),
+                "reporters": row[5],
                 "votes": {
                     "up": row[6],
                     "down": row[7],
                 },
-                "voters": json.loads(row[8]),
+                "voters": row[8],
                 "feedback_track": row[9]
             }
         return data
