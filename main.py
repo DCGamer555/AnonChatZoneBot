@@ -154,6 +154,8 @@ async def askForRating(bot, from_id, to_id):
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
+    user_details[to_id]["feedback_track"]["voted"] = False
+    user_details[to_id]["feedback_track"]["reported"] = False
     await bot.send_message(from_id,
                             text="""
 💡 *If the interlocutor misbehaved or violated the rules, send a complaint against them.
