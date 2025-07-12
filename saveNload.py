@@ -52,10 +52,10 @@ def save_user_data(data: dict):
                 details.get("age"),
                 details.get("country"),
                 details.get("reports", 0),
-                json.dumps(details.get("reporters", [])),
+                details.get("reporters", []),
                 details.get("votes", {}).get("up", 0),
                 details.get("votes", {}).get("down", 0),
-                json.dumps(details.get("voters", [])),
+                details.get("voters", []),
                 json.dumps(details.get("feedback_track", {}))
             ))
         conn.commit()
