@@ -4,7 +4,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 conn = psycopg2.connect(os.getenv("DATABASE_URL"))
 cursor = conn.cursor()
-cursor.execute("DROP TABLE IF EXISTS user_details")
+cursor.execute("DROP TABLE IF EXISTS user")
 conn.commit()
 cursor.close()
 conn.close()
