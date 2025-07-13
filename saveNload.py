@@ -2,6 +2,13 @@ import sqlite3, json, psycopg2, os
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+cursor = conn.cursor()
+cursor.execute("DROP TABLE IF EXISTS user_details")
+conn.commit()
+cursor.close()
+conn.close()
+
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
@@ -56,7 +63,7 @@ def save_user_data(data: dict):
                 details.get("votes", {}).get("up", 0),
                 details.get("votes", {}).get("down", 0),
                 json.dumps(details.get("voters", [])),
-                json.dumps(details.get("feedback_track", {}))
+                details.get("feedback_track", {})
             ))
         conn.commit()
         print("✅ User Data Saved to Drive Successfully.")
