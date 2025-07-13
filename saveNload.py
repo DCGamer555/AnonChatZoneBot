@@ -8,6 +8,7 @@ def get_connection():
 def ensure_db():
     with get_connection() as conn:
         cursor = conn.cursor()
+        cursor.execute("DROP TABLE IF IT EXISTS user_details")
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS user_details (
                     user_id BIGINT PRIMARY KEY,
@@ -19,7 +20,7 @@ def ensure_db():
                     vote_up INTEGER,
                     vote_down INTEGER,
                     voters TEXT,
-                    feedback_track JSON
+                    feedback_track JSONB
             )
         """)
         conn.commit()
