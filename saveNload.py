@@ -8,7 +8,7 @@ def get_connection():
 def ensure_db():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("DROP TABLE IF IT EXISTS user_details")
+        cursor.execute("DROP TABLE IF EXISTS user_details")
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS user_details (
                     user_id BIGINT PRIMARY KEY,
