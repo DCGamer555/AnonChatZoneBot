@@ -15,10 +15,10 @@ def ensure_db():
                     age INTEGER,
                     country VARCHAR(25),
                     reports INTEGER,
-                    reporters TEXT[],
+                    reporters TEXT,
                     vote_up INTEGER,
                     vote_down INTEGER,
-                    voters TEXT[],
+                    voters TEXT,
                     feedback_track JSONB
             )
         """)
@@ -52,10 +52,10 @@ def save_user_data(data: dict):
                 details.get("age"),
                 details.get("country"),
                 details.get("reports", 0),
-                details.get("reporters", []),
+                json.dumps(details.get("reporters", [])),
                 details.get("votes", {}).get("up", 0),
                 details.get("votes", {}).get("down", 0),
-                details.get("voters", []),
+                json.dumps(details.get("voters", [])),
                 json.dumps(details.get("feedback_track", {}))
             ))
         conn.commit()
@@ -76,12 +76,12 @@ def load_user_data() -> dict:
                 "age": row[2],
                 "country": row[3],
                 "reports": row[4],
-                "reporters": row[5],
+                "reporters": json.loads(row[5]),
                 "votes": {
                     "up": row[6],
                     "down": row[7],
                 },
-                "voters": row[8],
+                "voters": json.loads(row[8]),
                 "feedback_track": row[9]
             }
         return data
