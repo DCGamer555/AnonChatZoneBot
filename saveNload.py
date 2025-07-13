@@ -83,6 +83,6 @@ def load_user_data() -> dict:
                     "down": row[7],
                 },
                 "voters": json.loads(row[8]),
-                "feedback_track": json.loads(row[9]),
+                "feedback_track": row[9],
             }
         return data
