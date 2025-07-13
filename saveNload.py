@@ -8,6 +8,7 @@ cursor.execute("DROP TABLE IF EXISTS user_details")
 conn.commit()
 cursor.close()
 conn.close()
+exit()
 
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
