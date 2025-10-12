@@ -364,7 +364,7 @@ async def show_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     profile_text = f"""
 *User Profile*
 
-*Name:* _{update.effective_user.first_name}_
+*Name:* _{update.effective_user.full_name}_ | @{update.effective_user.username}
 *ID:* {user_id}
 *Gender:* {"Male" if user["gender"] == "M" else "Female"}
 *Age:* {user["age"]}
