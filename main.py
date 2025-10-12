@@ -360,7 +360,7 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def show_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user = user_details[user_id]
-    username = f"| @{update.effective_user.username}" if update.effective_user.username else ""
+    username = f"(@{update.effective_user.username})" if update.effective_user.username else ""
     votes = user.get("votes", {"up": 0, "down": 0})
     profile_text = f"""
 *User Profile*
