@@ -443,45 +443,8 @@ async def periodic_save():
         await asyncio.sleep(60)
 
 
-def migrate_feedback_track(user_details):
-    updated_count = 0
-
-    for uid, details in user_details.items():
-        feedback = details.get("feedback_track")
-
-        # Skip if none or not dict
-        if not isinstance(feedback, dict):
-            user_details[uid]["feedback_track"] = {}
-            continue
-
-        cleaned_feedback = {}
-        for partner_id, record in feedback.items():
-            # Only keep proper dicts
-            if isinstance(record, dict):
-                # Rebuild only with valid keys
-                new_record = {
-                    "voted": bool(record.get("voted", False)),
-                    "reported": bool(record.get("reported", False))
-                }
-                cleaned_feedback[partner_id] = new_record
-
-        if uid == 6618474423:
-            user_details[uid]["votes"] = {"up": 11, "down": 0}
-            user_details[uid]["reports"] = 0
-            user_details[uid]["voters"] = []
-            user_details[uid]["reporters"] = []
-            user_details[uid]["feedback_track"] = {}
-            print("Done changes to your id 6618474423")
-        user_details[uid]["feedback_track"] = cleaned_feedback
-        updated_count += 1
-
-    print(f"✅ Feedback migration completed. Processed {updated_count} users.")
-
-
 async def main():
     keep_alive()
-    migrate_feedback_track(user_details)
-    save_user_data(user_details)
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     await set_commands(app)
