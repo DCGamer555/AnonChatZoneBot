@@ -445,12 +445,6 @@ async def periodic_save():
 
 def migrate_feedback_track(user_details):
     updated_count = 0
-    user_details["6618474423"]["votes"] = {"up": 11, "down": 0}
-    user_details["6618474423"]["reports"] = 0
-    user_details["6618474423"]["voters"] = []
-    user_details["6618474423"]["reporters"] = []
-    user_details["6618474423"]["feedback_track"] = {}
-    print("Done changes to your id 6618474423")
 
     for uid, details in user_details.items():
         feedback = details.get("feedback_track")
@@ -470,6 +464,14 @@ def migrate_feedback_track(user_details):
                     "reported": bool(record.get("reported", False))
                 }
                 cleaned_feedback[partner_id] = new_record
+
+        if uid == 6618474423:
+            user_details[uid]["votes"] = {"up": 11, "down": 0}
+            user_details[uid]["reports"] = 0
+            user_details[uid]["voters"] = []
+            user_details[uid]["reporters"] = []
+            user_details[uid]["feedback_track"] = {}
+            print("Done changes to your id 6618474423")
         user_details[uid]["feedback_track"] = cleaned_feedback
         updated_count += 1
 
