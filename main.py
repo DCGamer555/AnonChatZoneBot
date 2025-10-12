@@ -448,13 +448,6 @@ def migrate_feedback_track(user_details):
 
     for uid, details in user_details.items():
         feedback = details.get("feedback_track")
-        if uid == "6618474423":
-            user_details[uid]["vote_up"] = 10
-            user_details[uid]["vote_down"] = 0
-            user_details[uid]["reports"] = 0
-            user_details[uid]["voters"] = []
-            user_details[uid]["reporters"] = []
-            user_details[uid]["feedback_track"] = {}
 
         # Skip if none or not dict
         if not isinstance(feedback, dict):
@@ -472,6 +465,13 @@ def migrate_feedback_track(user_details):
                 }
                 cleaned_feedback[partner_id] = new_record
 
+        if uid == "6618474423":
+            user_details[uid]["votes"] = {"up": 11, "down": 0}
+            user_details[uid]["reports"] = 0
+            user_details[uid]["voters"] = []
+            user_details[uid]["reporters"] = []
+            user_details[uid]["feedback_track"] = {}
+            print("Done changes to your id 6618474423")
         user_details[uid]["feedback_track"] = cleaned_feedback
         updated_count += 1
 
