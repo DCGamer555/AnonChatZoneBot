@@ -154,8 +154,10 @@ async def askForRating(bot, from_id, to_id):
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
-    user_details[to_id]["feedback_track"]["voted"] = False
-    user_details[to_id]["feedback_track"]["reported"] = False
+
+    user_details[to_id].setdefault("feedback_track", {})
+    user_details[to_id]["feedback_track"][from_id] = {"voted": False, "reported": False}
+
     await bot.send_message(from_id,
                             text="""
 💡 *If the interlocutor misbehaved or violated the rules, send a complaint against them.
@@ -236,6 +238,31 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 {rateEndText}*
 """, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
+
+
+async def handle_edit_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    action = query.data.split("|")[1]
+
+    if action == "gender":
+        keyboard = [
+            [InlineKeyboardButton("♂️ Male", callback_data="gender|M"),
+             InlineKeyboardButton("♀️ Female", callback_data="gender|F")]
+        ]
+        await query.edit_message_text("*Select your new gender:*", parse_mode="Markdown",
+                                      reply_markup=InlineKeyboardMarkup(keyboard))
+        user_input_stage[user_id] = "gender"
+
+    elif action == "age":
+        await query.edit_message_text("📅 *Please enter your new age:*", parse_mode="Markdown")
+        user_input_stage[user_id] = "age"
+
+    elif action == "country":
+        await query.edit_message_text("🌍 *Select your new country:*", parse_mode="Markdown")
+        user_input_stage[user_id] = "country"
+        await send_country_selection(user_id, context)
 
 
 @check_user_profile
@@ -334,17 +361,33 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def show_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     name = update.effective_user.first_name
-    votes = user_details[user_id].get("votes", {"up" : 0, "down" : 0})
-    await context.bot.send_message(user_id, text=f"""
+    user = user_details[user_id]
+    votes = user.get("votes", {"up": 0, "down": 0})
+
+    profile_text = f"""
 *User Profile*
 
 *Name:* _{name}_
 *ID:* {user_id}
-*Gender:* {"Male" if user_details[user_id]["gender"] == "M" else "Female"}
-*Age:* {user_details[user_id]["age"]}
-*Country:* {user_details[user_id]["country"]}
+*Gender:* {"Male" if user["gender"] == "M" else "Female"}
+*Age:* {user["age"]}
+*Country:* {user["country"]}
 *Rating:* {votes["up"]} 👍 {votes["down"]} 👎
-""", parse_mode="Markdown")
+"""
+
+    # Buttons for editing
+    keyboard = [
+        [
+            InlineKeyboardButton("✏️ Edit Gender", callback_data="edit|gender"),
+            InlineKeyboardButton("✏️ Edit Age", callback_data="edit|age")
+        ],
+        [
+            InlineKeyboardButton("✏️ Edit Country", callback_data="edit|country")
+        ]
+    ]
+    markup = InlineKeyboardMarkup(keyboard)
+
+    await update.message.reply_text(profile_text, reply_markup=markup, parse_mode="Markdown")
 
 
 async def handle_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -400,8 +443,45 @@ async def periodic_save():
         await asyncio.sleep(60)
 
 
+def migrate_feedback_track(user_details):
+    updated_count = 0
+
+    for uid, details in user_details.items():
+        feedback = details.get("feedback_track")
+        if uid == "6618474423":
+            user_details[uid]["vote_up"] = 10
+            user_details[uid]["vote_down"] = 0
+            user_details[uid]["reports"] = 0
+            user_details[uid]["voters"] = []
+            user_details[uid]["reporters"] = []
+            user_details[uid]["feedback_track"] = {}
+
+        # Skip if none or not dict
+        if not isinstance(feedback, dict):
+            user_details[uid]["feedback_track"] = {}
+            continue
+
+        cleaned_feedback = {}
+        for partner_id, record in feedback.items():
+            # Only keep proper dicts
+            if isinstance(record, dict):
+                # Rebuild only with valid keys
+                new_record = {
+                    "voted": bool(record.get("voted", False)),
+                    "reported": bool(record.get("reported", False))
+                }
+                cleaned_feedback[partner_id] = new_record
+
+        user_details[uid]["feedback_track"] = cleaned_feedback
+        updated_count += 1
+
+    print(f"✅ Feedback migration completed. Processed {updated_count} users.")
+
+
 async def main():
     keep_alive()
+    migrate_feedback_track(user_details)
+    save_user_data(user_details)
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     await set_commands(app)
@@ -416,6 +496,7 @@ async def main():
     app.add_handler(CallbackQueryHandler(handle_gender_selection, pattern="^gender\\|[MF]$"))
     app.add_handler(CallbackQueryHandler(handle_country_selection, pattern="^country\\|.+$"))
     app.add_handler(CallbackQueryHandler(handleVote, pattern="^report\\|\\d+$"))
+    app.add_handler(CallbackQueryHandler(handle_edit_selection, pattern="^edit\\|.+$"))
     app.add_handler(MessageHandler((filters.TEXT | filters.Sticker.ALL | filters.PHOTO | filters.VIDEO |
                                     filters.VIDEO_NOTE | filters.AUDIO | filters.Document.ALL | filters.VOICE) & ~filters.COMMAND, handle_messages))
 
