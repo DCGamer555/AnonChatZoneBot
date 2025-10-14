@@ -230,6 +230,8 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     voted = track[user_id]["voted"]
     reported = track[user_id]["reported"]
 
+    if (voted and reported) or (not voted and not reported):
+        del user_details[target_id]["feedback_track"][user_id]
     if voted and reported:
         await query.edit_message_text("*Thank You for your feedback.\nYour feedback helps other users to be safe and secure.*", parse_mode="Markdown")
     else:
@@ -241,10 +243,6 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not reported:
             buttons.append([InlineKeyboardButton("🚩 Report", callback_data=f"report|{target_id}")])
         await query.edit_message_text(f"*{rate_text}*", reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
-    try:
-        del user_details[target_id]["feedback_track"][user_id]
-    except KeyError:
-        pass
 
 
 async def handle_edit_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -404,6 +402,14 @@ async def periodic_save():
         user_details = {int(k): v for k, v in load_user_data().items()}
         await asyncio.sleep(60)
 
+async def periodic_feedback_clear():
+    global user_details
+    while True:
+        for v in user_details.values():
+            v["feedback_track"] = {}
+        await asyncio.sleep(28800)
+
+
 
 async def main():
     keep_alive()
@@ -428,6 +434,7 @@ async def main():
     ))
 
     asyncio.create_task(periodic_save())
+    asyncio.create_task(periodic_feedback_clear())
     await app.run_polling()
 
 
