@@ -241,6 +241,7 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not reported:
             buttons.append([InlineKeyboardButton("🚩 Report", callback_data=f"report|{target_id}")])
         await query.edit_message_text(f"*{rate_text}*", reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
+    del user_details[target_id]["feedback_track"][user_id]
 
 
 async def handle_edit_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
