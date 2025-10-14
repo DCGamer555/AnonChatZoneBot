@@ -241,7 +241,10 @@ async def handleVote(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not reported:
             buttons.append([InlineKeyboardButton("🚩 Report", callback_data=f"report|{target_id}")])
         await query.edit_message_text(f"*{rate_text}*", reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
-    del user_details[target_id]["feedback_track"][user_id]
+    try:
+        del user_details[target_id]["feedback_track"][user_id]
+    except KeyError:
+        pass
 
 
 async def handle_edit_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -406,6 +409,9 @@ async def main():
     keep_alive()
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     await set_commands(app)
+    for k, v in user_details:
+        user_details[k]["feedback_track"] = {}
+        print("done")
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("find", find))
