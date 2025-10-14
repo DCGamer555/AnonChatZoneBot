@@ -409,9 +409,6 @@ async def main():
     keep_alive()
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     await set_commands(app)
-    for k, v in user_details.items():
-        v["feedback_track"] = {}
-    print("done")
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("find", find))
