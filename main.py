@@ -305,21 +305,21 @@ async def relay_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         msg = update.message
         try:
             if msg.text:
-                await context.bot.send_message(chat_id=partner_id, text=msg.text)
+                await context.bot.send_message(chat_id=partner_id, text=msg.text, reply_to_message_id=msg.message_id)
             elif msg.sticker:
-                await context.bot.send_sticker(chat_id=partner_id, sticker=msg.sticker.file_id)
+                await context.bot.send_sticker(chat_id=partner_id, sticker=msg.sticker.file_id, reply_to_message_id=msg.message_id)
             elif msg.photo:
-                await context.bot.send_photo(chat_id=partner_id, photo=msg.photo[-1].file_id)
+                await context.bot.send_photo(chat_id=partner_id, photo=msg.photo[-1].file_id, reply_to_message_id=msg.message_id)
             elif msg.video:
-                await context.bot.send_video(chat_id=partner_id, video=msg.video.file_id)
+                await context.bot.send_video(chat_id=partner_id, video=msg.video.file_id, reply_to_message_id=msg.message_id)
             elif msg.video_note:
-                await context.bot.send_video_note(chat_id=partner_id, video_note=msg.video_note.file_id)
+                await context.bot.send_video_note(chat_id=partner_id, video_note=msg.video_note.file_id, reply_to_message_id=msg.message_id)
             elif msg.voice:
-                await context.bot.send_voice(chat_id=partner_id, voice=msg.voice.file_id)
+                await context.bot.send_voice(chat_id=partner_id, voice=msg.voice.file_id, reply_to_message_id=msg.message_id)
             elif msg.audio:
-                await context.bot.send_audio(chat_id=partner_id, audio=msg.audio.file_id)
+                await context.bot.send_audio(chat_id=partner_id, audio=msg.audio.file_id, reply_to_message_id=msg.message_id)
             elif msg.document:
-                await context.bot.send_document(chat_id=partner_id, document=msg.document.file_id)
+                await context.bot.send_document(chat_id=partner_id, document=msg.document.file_id, reply_to_message_id=msg.message_id)
         except Exception as e:
             await update.message.reply_text("❌ *Failed to send message.*", parse_mode="Markdown")
             print(e)
