@@ -334,9 +334,9 @@ async def next(update: Update, context: ContextTypes.DEFAULT_TYPE):
         partner = active_pairs.pop(user_id)
         active_pairs.pop(partner, None)
         await context.bot.send_message(chat_id=partner, text="⛔ *Your partner left the chat.*", parse_mode="Markdown")
+        await update.message.reply_text("🔁 *Partner skipped...\nYou're added to the waiting queue...\nFinding new one...*", parse_mode="Markdown")
         await askForRating(context.bot, user_id, partner)
         await askForRating(context.bot, partner, user_id)
-        await update.message.reply_text("🔁 *Partner skipped...\nYou're added to the waiting queue...\nFinding new one...*", parse_mode="Markdown")
         await find(update, context)
     else:
         await update.message.reply_text("❗*You're not in a chat.*\nUse /find to connect.", parse_mode="Markdown")
@@ -349,9 +349,9 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
         partner = active_pairs.pop(user_id)
         active_pairs.pop(partner, None)
         await context.bot.send_message(chat_id=partner, text="⛔ *Your partner left the chat.*", parse_mode="Markdown")
+        await update.message.reply_text("👋 *Chat ended.*", parse_mode="Markdown")
         await askForRating(context.bot, user_id, partner)
         await askForRating(context.bot, partner, user_id)
-        await update.message.reply_text("👋 *Chat ended.*", parse_mode="Markdown")
     elif user_id in waiting_users:
         waiting_users.remove(user_id)
         await update.message.reply_text("❗ *You've been popped out of the Waiting Queue.*\nUse /find to search for a partner.", parse_mode="Markdown")
