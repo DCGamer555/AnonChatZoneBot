@@ -8,18 +8,18 @@ from commands.stop import stop
 
 from handlers.setup import handle_user_setup
 
-import main
+import init
 
 
 async def relay_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if await is_blocked_by(user_id, context):
         return
-    if user_id in main.user_input_stage or user_id in main.edit_stage:
+    if user_id in init.user_input_stage or user_id in init.edit_stage:
         await handle_user_setup(update, context)
         return
-    if user_id in main.active_pairs:
-        partner_id = main.active_pairs[user_id]
+    if user_id in init.active_pairs:
+        partner_id = init.active_pairs[user_id]
         if await is_blocked_by(partner_id, context):
             await stop(update, context)
             return

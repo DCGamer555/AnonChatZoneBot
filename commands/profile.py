@@ -3,13 +3,13 @@ from telegram.ext import ContextTypes
 
 from handlers.setup import check_user_profile
 
-import main
+import init
 
 
 @check_user_profile
 async def show_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    user = main.user_details[user_id]
+    user = init.user_details[user_id]
     votes = user.get("votes", {"up": 0, "down": 0})
     profile_text = f"""
 <b>User Profile</b>

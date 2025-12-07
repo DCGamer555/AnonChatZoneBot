@@ -4,7 +4,7 @@ from functools import wraps
 
 from handlers.country import send_country_selection
 
-import main
+import init
 
 
 def check_user_profile(handler_func):
@@ -12,8 +12,8 @@ def check_user_profile(handler_func):
     async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
 
-        if user_id not in main.user_details:
-            main.user_details[user_id] = {
+        if user_id not in init.user_details:
+            init.user_details[user_id] = {
                 "gender": None,
                 "age": None,
                 "country": None,
@@ -23,7 +23,7 @@ def check_user_profile(handler_func):
                 "voters": [],
                 "feedback_track": {}
             }
-            main.user_input_stage[user_id] = "gender"
+            init.user_input_stage[user_id] = "gender"
             keyboard = [[
                 InlineKeyboardButton("♂️ Male", callback_data="gender|M"),
                 InlineKeyboardButton("♀️ Female", callback_data="gender|F")
@@ -33,8 +33,8 @@ def check_user_profile(handler_func):
             await update.message.reply_text("*Let's set up your profile.*\nWhat's your gender?", reply_markup=markup, parse_mode="Markdown")
             return
 
-        if not all([main.user_details[user_id].get("gender"), main.user_details[user_id].get("age"), main.user_details[user_id].get("country")]):
-            stage = main.user_input_stage.get(user_id, "gender")
+        if not all([init.user_details[user_id].get("gender"), init.user_details[user_id].get("age"), init.user_details[user_id].get("country")]):
+            stage = init.user_input_stage.get(user_id, "gender")
             if stage == "gender":
                 keyboard = [[
                     InlineKeyboardButton("♂️ Male", callback_data="gender|M"),
@@ -54,26 +54,26 @@ async def handle_user_setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
 
     # Editing age
-    if user_id in main.edit_stage and main.edit_stage[user_id] == "age":
+    if user_id in init.edit_stage and init.edit_stage[user_id] == "age":
         try:
             age = int(text)
-            main.user_details[user_id]["age"] = age
-            del main.edit_stage[user_id]
+            init.user_details[user_id]["age"] = age
+            del init.edit_stage[user_id]
             await update.message.reply_text(f"✅ *Age updated to {age}.*", parse_mode="Markdown")
         except ValueError:
             await update.message.reply_text("❌ *Please enter a valid number for age.*", parse_mode="Markdown")
         return
 
     # First-time setup age
-    if user_id not in main.user_input_stage:
+    if user_id not in init.user_input_stage:
         return
 
-    stage = main.user_input_stage[user_id]
+    stage = init.user_input_stage[user_id]
     if stage == "age":
         try:
             age = int(text)
-            main.user_details[user_id]["age"] = age
-            main.user_input_stage[user_id] = "country"
+            init.user_details[user_id]["age"] = age
+            init.user_input_stage[user_id] = "country"
             await update.message.reply_text(f"✅ *Age set to {age}.*\n🌍 Great! Now, please select your country:", parse_mode="Markdown")
             await send_country_selection(user_id, context)
         except ValueError:

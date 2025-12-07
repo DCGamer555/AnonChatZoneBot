@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
 
-import main
+import init
 
 
 async def send_country_selection(user_id, context):
@@ -30,12 +30,12 @@ async def handle_country_selection(update: Update, context: ContextTypes.DEFAULT
     user_id = query.from_user.id
     country = query.data.split("|")[1]
 
-    if user_id in main.edit_stage and main.edit_stage[user_id] == "country":
-        main.user_details[user_id]["country"] = country
-        del main.edit_stage[user_id]
+    if user_id in init.edit_stage and init.edit_stage[user_id] == "country":
+        init.user_details[user_id]["country"] = country
+        del init.edit_stage[user_id]
         await query.edit_message_text(text=f"✅ *Country updated to {country}.*", parse_mode="Markdown")
         return
 
-    main.user_details[user_id]["country"] = country
-    del main.user_input_stage[user_id]
+    init.user_details[user_id]["country"] = country
+    del init.user_input_stage[user_id]
     await query.edit_message_text(text=f"✅ *Country set to {country}.*\nYou're all set! Use /find to start chatting.", parse_mode="Markdown")
