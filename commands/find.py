@@ -20,6 +20,6 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user2 = init.waiting_users.pop(0)
         init.active_pairs[user1] = user2
         init.active_pairs[user2] = user1
-        uv1, uv2 = init.user_details[user1]["votes"], main.user_details[user2]["votes"]
+        uv1, uv2 = init.user_details[user1]["votes"], init.user_details[user2]["votes"]
         await context.bot.send_message(chat_id=user1, text=f"🎯 *Found Someone.... Say Hi!!*\nRating: {uv2['up']} 👍 {uv2['down']} 👎\n/next - Next Chat\n/stop - Stop Chat", parse_mode="Markdown")
         await context.bot.send_message(chat_id=user2, text=f"🎯 *Found Someone.... Say Hi!!*\nRating: {uv1['up']} 👍 {uv1['down']} 👎\n/next - Next Chat\n/stop - Stop Chat", parse_mode="Markdown")
