@@ -1,11 +1,13 @@
+# Imports everything needed from the telegram module
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
-from handlers.setup import check_user_profile
+from handlers.setup import check_user_profile  # Imports the handler which checks if the user's profile exists
 
-import init
+import init  # Importing the bot credentials and users' details
 
 
+# Function shows the user their profile and asks if they wanna edit them and what to edit
 @check_user_profile
 async def show_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id

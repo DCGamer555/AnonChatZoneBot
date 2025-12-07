@@ -1,10 +1,17 @@
-import sqlite3, json, psycopg2, os
+# Imports modules which handles the database
+import json
+import os
+import psycopg2
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")  # Holds the database's URL
 
+
+# Establishes connection between the program and the database
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
+
+# Ensures the structure of the database is in the desired form and establishes it newly if it's missing
 def ensure_db():
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -24,6 +31,8 @@ def ensure_db():
         """)
         conn.commit()
 
+
+# Function which stores the details of the users in the database
 def save_user_data(data: dict):
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -61,6 +70,8 @@ def save_user_data(data: dict):
         conn.commit()
         print("✅ User Data Saved to Drive Successfully.")
 
+
+# Function which returns the users' details it read from the database
 def load_user_data() -> dict:
     ensure_db()
     with get_connection() as conn:
