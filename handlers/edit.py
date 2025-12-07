@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
 
-from country import send_country_selection
+from handlers.country import send_country_selection
 
 import main
 

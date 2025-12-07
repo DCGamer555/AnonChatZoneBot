@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from functools import wraps
 
-from country import send_country_selection
+from handlers.country import send_country_selection
 
 import main
 
