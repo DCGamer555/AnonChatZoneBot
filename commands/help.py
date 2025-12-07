@@ -1,0 +1,18 @@
+from telegram import Update
+from telegram.ext import ContextTypes
+
+from handlers.setup import check_user_profile
+
+
+@check_user_profile
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("""
+🤖 *Anonymous Chat Bot*
+Commands:
+/start - Show welcome message
+/find - Find a new partner
+/next - Skip current chat
+/stop - Stop current chat
+/help - Show this message
+/profile - Show user profile
+""", parse_mode="Markdown")
