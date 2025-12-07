@@ -69,8 +69,8 @@ async def main():
         relay_message
     ))
 
-    await asyncio.create_task(periodic_save())
-    await asyncio.create_task(periodic_feedback_clear())
+    asyncio.create_task(periodic_save())
+    asyncio.create_task(periodic_feedback_clear())
     await app.run_polling()
 
 
