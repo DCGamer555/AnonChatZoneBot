@@ -21,6 +21,8 @@ from handlers.gender import handle_gender_selection
 from handlers.country import handle_country_selection
 from handlers.edit import handle_edit_selection
 
+from security import global_error_handler
+
 # Imports for basic functionality of bot and its data credentials
 import asyncio
 import init
@@ -77,6 +79,8 @@ async def main():
          filters.VIDEO_NOTE | filters.AUDIO | filters.Document.ALL | filters.VOICE) & ~filters.COMMAND,
         relay_message
     ))  # filters the commands from the messages sent by the user
+
+    app.add_error_handler(global_error_handler)
 
     asyncio.create_task(periodic_save())  # Saves the user data
     asyncio.create_task(periodic_feedback_clear())  # Frees up the feedback_track

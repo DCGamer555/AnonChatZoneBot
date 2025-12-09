@@ -1,5 +1,7 @@
 from telegram.error import Forbidden  # Importing the 'Forbidden' exception
 
+import init
+
 
 # Function which checks if the bot is blocked by the given user
 async def safe_tele_func_call(caller, *args, **kwargs):
@@ -7,3 +9,18 @@ async def safe_tele_func_call(caller, *args, **kwargs):
         return await caller(*args, **kwargs)
     except Forbidden:
         return None
+
+
+async def global_error_handler(update, context):
+    try:
+        e = context.error
+        text = f" 🚨 YO THERE IS AN ERROR TWIN 🚨 \n\n{type(e).__name__}: {e}\n"
+
+        if update and update.effective_user:
+            text += f"\n👤 User ID: {update.effective_user.id}"
+
+        text += "\n\nngl something just exploded 😭 pls come check...!"
+
+        await context.bot.send_message(chat_id=init.OWNER, text=text)
+    except:
+        pass
