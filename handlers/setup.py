@@ -4,6 +4,7 @@ from telegram.ext import ContextTypes
 from functools import wraps
 
 from handlers.country import send_country_selection  # Imports the Handler which sends the country selection menu to the user
+from security import safe_tele_func_call
 
 import init  # Importing the bot credentials and users' details
 
@@ -31,8 +32,8 @@ def check_user_profile(handler_func):
                 InlineKeyboardButton("♀️ Female", callback_data="gender|F")
             ]]
             markup = InlineKeyboardMarkup(keyboard)
-            await update.message.reply_text("👋 Welcome to *Chat Zone - Anonymous Chat Bot!*", parse_mode="Markdown")
-            await update.message.reply_text("*Let's set up your profile.*\nWhat's your gender?", reply_markup=markup, parse_mode="Markdown")
+            await safe_tele_func_call(update.message.reply_text, text="👋 Welcome to *Chat Zone - Anonymous Chat Bot!*", parse_mode="Markdown")
+            await safe_tele_func_call(update.message.reply_text, text="*Let's set up your profile.*\nWhat's your gender?", reply_markup=markup, parse_mode="Markdown")
             return
 
         if not all([init.user_details[user_id].get("gender"), init.user_details[user_id].get("age"), init.user_details[user_id].get("country")]):  # Checks if every user detail is saved or not
@@ -43,9 +44,9 @@ def check_user_profile(handler_func):
                     InlineKeyboardButton("♀️ Female", callback_data="gender|F")
                 ]]
                 markup = InlineKeyboardMarkup(keyboard)
-                await update.message.reply_text("*Please select your gender: *", reply_markup=markup, parse_mode="Markdown")
+                await safe_tele_func_call(update.message.reply_text, text="*Please select your gender: *", reply_markup=markup, parse_mode="Markdown")
             elif stage == "age":  # If the stage is in age then it asks the user to enter the age
-                await update.message.reply_text("📅 *Please enter your age:*", parse_mode="Markdown")
+                await safe_tele_func_call(update.message.reply_text, text="📅 *Please enter your age:*", parse_mode="Markdown")
             return
         return await handler_func(update, context)
     return wrapper
@@ -61,9 +62,9 @@ async def handle_user_setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
             age = int(text)
             init.user_details[user_id]["age"] = age
             del init.edit_stage[user_id]
-            await update.message.reply_text(f"✅ *Age updated to {age}.*", parse_mode="Markdown")
+            await safe_tele_func_call(update.message.reply_text, text=f"✅ *Age updated to {age}.*", parse_mode="Markdown")
         except ValueError:  # If the user inputs something else it will notify them to do it again
-            await update.message.reply_text("❌ *Please enter a valid number for age.*", parse_mode="Markdown")
+            await safe_tele_func_call(update.message.reply_text, text="❌ *Please enter a valid number for age.*", parse_mode="Markdown")
         return
 
     # This part works if the user is setting up their profile for the first time
@@ -76,7 +77,7 @@ async def handle_user_setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
             age = int(text)
             init.user_details[user_id]["age"] = age
             init.user_input_stage[user_id] = "country"
-            await update.message.reply_text(f"✅ *Age set to {age}.*\n🌍 Great! Now, please select your country:", parse_mode="Markdown")
+            await safe_tele_func_call(update.message.reply_text, text=f"✅ *Age set to {age}.*\n🌍 Great! Now, please select your country:", parse_mode="Markdown")
             await send_country_selection(user_id, context)
         except ValueError:  # If the user inputs something else it will notify them to do it again
-            await update.message.reply_text("❌ *Please enter a valid number for age.*", parse_mode="Markdown")
+            await safe_tele_func_call(update.message.reply_text, text="❌ *Please enter a valid number for age.*", parse_mode="Markdown")

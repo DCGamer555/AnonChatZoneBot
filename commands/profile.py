@@ -3,6 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
 from handlers.setup import check_user_profile  # Imports the handler which checks if the user's profile exists
+from security import safe_tele_func_call
 
 import init  # Importing the bot credentials and users' details
 
@@ -28,4 +29,4 @@ async def show_profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
          InlineKeyboardButton("✏️ Edit Age", callback_data="edit|age")],
         [InlineKeyboardButton("✏️ Edit Country", callback_data="edit|country")]
     ]
-    await update.message.reply_text(profile_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+    await safe_tele_func_call(update.message.reply_text, text=profile_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")

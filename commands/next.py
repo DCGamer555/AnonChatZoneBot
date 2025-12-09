@@ -6,6 +6,7 @@ from commands.find import find  # Imports the command functionality which finds 
 
 from handlers.setup import check_user_profile  # Imports the handler which checks if the user's profile exists
 from handlers.rating import ask_for_rating  # Imports the handler which asks for the user to rate their partner after a conversation
+from security import safe_tele_func_call
 
 import init  # Importing the bot credentials and users' details
 
@@ -19,8 +20,8 @@ async def next(update: Update, context: ContextTypes.DEFAULT_TYPE):
         init.active_pairs.pop(partner, None)  # Pops the partner's ID from the active_pair
 
         # Notify the user and his partner that the conversation us ended
-        await context.bot.send_message(chat_id=partner, text="⛔ *Your partner left the chat.*", parse_mode="Markdown")
-        await update.message.reply_text("🔁 *Partner skipped...\nYou're added to the waiting queue...\nFinding new one...*", parse_mode="Markdown")
+        await safe_tele_func_call(context.bot.send_message, chat_id=partner, text="⛔ *Your partner left the chat.*", parse_mode="Markdown")
+        await safe_tele_func_call(update.message.reply_text, text="🔁 *Partner skipped...\nYou're added to the waiting queue...\nFinding new one...*", parse_mode="Markdown")
 
         # Ask both users to rate each other
         await ask_for_rating(context.bot, user_id, partner)
@@ -28,4 +29,4 @@ async def next(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await find(update, context)  # Finds a new partner for the user
     else:  # Notifies the user that they are not in an active conversation
-        await update.message.reply_text("❗*You're not in a chat.*\nUse /find to connect.", parse_mode="Markdown")
+        await safe_tele_func_call(update.message.reply_text, text="❗*You're not in a chat.*\nUse /find to connect.", parse_mode="Markdown")
