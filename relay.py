@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.error import Forbidden
 
-from security import is_blocked_by  # Importing the func which checks if the bot is blocked
+# from security import is_blocked_by  # Importing the func which checks if the bot is blocked
 
 from commands.stop import stop  # Importing the function which stops the conversation between the users
 
@@ -15,16 +15,11 @@ import init  # Importing the bot credentials and users' details
 # FUnction which relays the message between the users
 async def relay_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    if await is_blocked_by(user_id, context):  # Checking if the bot is blocked by the user
-        return
     if user_id in init.user_input_stage or user_id in init.edit_stage:  # Checking if the user is in user input stage or in the stage of editing the details
         await handle_user_setup(update, context)
         return
     if user_id in init.active_pairs:  # Checking if the user is in active pairs
         partner_id = init.active_pairs[user_id]
-        if await is_blocked_by(partner_id, context):  # Checking if the bot is blocked by the partner
-            await stop(update, context)  # Stopping the conversation if the bot is blocked
-            return
         msg = update.message
         try:  # Trying to relay the messages between the users
             if msg.text:
